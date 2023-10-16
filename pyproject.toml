@@ -1,0 +1,30 @@
+[build-system]
+requires = ["hatchling", "beautifulsoup4"]
+build-backend = "hatchling.build"
+
+[project]
+name = "alt_text"
+version = "0.0.1"
+authors = [
+    { name = "Jack Byrne", email = "jbyrne4@stevens.edu" },
+    { name = "David Cruz", email = "dcruz2@stevens.edu" },
+    { name = "Jared Donnelly", email = "jdonnel3@stevens.edu" },
+    { name = "Ethan Kleschinsky", email = "ekleschi@stevens.edu" },
+    { name = "Tyler Lane", email = "tlane@stevens.edu" },
+    { name = "Carson Lee", email = "clee27@stevens.edu" },
+]
+maintainers = [
+    { name = "David Cruz", email = "dcruz2@stevens.edu" },
+    { name = "Eric Hellman", email = "eric@hellman.net" },
+]
+description = "A package used for finding, generating, and setting alt-text for images in HTML and EPUB files."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/EbookFoundation/alt-text"

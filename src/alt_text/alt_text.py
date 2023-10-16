@@ -76,37 +76,3 @@ class AltTextHTML(AltText):
         with open(path, 'w', encoding='utf-8') as file:
             file.write(html)
         return path
-        
-if __name__ == "__main__":
-    ## MAIN TEST
-    print("TESTING index.py")
-    alt:AltTextHTML = AltTextHTML()
-
-    ## PARSE TEST
-    html = '<html><head><title>Test</title></head><body><img src="test"/><h1>Parse me!</h1><img src="test2"/></body></html>'
-    alt.parse(html)
-
-    ## PARSEFILE TEST
-    path1 = "./books/pg71856-h/pg71856-images.html"
-    path2 = "./books/pg71859-h/pg71859-images.html"
-    alt.parseFile(path1)
-
-    ## GETALLIMGS & SETALT TEST
-    imgs = alt.getNoAltImgs()
-    print(imgs)
-
-    
-# FORMATS = ["html", "epub3"]
-# format = format.lower()
-# if not format in FORMATS:
-#     raise Exception("{type} is not a valid type.".format(type = format))
-# self.format = format
-# match format:
-#     case "html":
-#         self.parse = self._parseHTML
-#         self.parseFile = self._parseFileHTML
-#         self.getAllImgs = self._getAllImgsHTML
-#     case "epub3":
-#         raise Exception("IMPLEMENT ME: epub3 is not supported yet")
-# return None
-
