@@ -1,44 +1,49 @@
 import sys
+
 sys.path.append("../")
 import src.alttext.alttext as alttext
-import ebooklib
+import src.alttext.descengine as descengine
+import src.alttext.ocrengine as ocrengine
+import keys
 
-HTML1 = "../books/pg71856-h/pg71856-images.html"
-HTML2 = "../books/pg71859-h/pg71859-images.html"
+# HTML BOOK FILEPATHS
+HTML_BIRD = "../books/pg30221-h/pg30221-images.html"
+HTML_HUNTING = "../books/pg37122-h/pg37122-images.html"
+HTML_MECHANIC = "../books/pg71856-h/pg71856-images.html"
+HTML_INFINITY = "../books/pg71859-h/pg71859-images.html"
 
+# EPUB BOOK FILEPATHS
 EPUB1 = "../books/pg71856-images-3.epub"
 EPUB2 = "../books/pg71908-images-3.epub"
 EPUB3 = "../books/seuss.epub"
 
+
 def testHTML():
-    ## MAIN TEST
     print("TESTING HTML")
-    altHTML:alttext.AltTextHTML = alttext.AltTextHTML()
 
-    ## PARSE TEST
-    html = '<html><head><title>Test</title></head><body><img src="test"/><h1>Parse me!</h1><img src="test2"/></body></html>'
-    altHTML.parse(html)
+    alt: alttext.AltTextHTML = alttext.AltTextHTML(
+        descengine.GoogleVertexAPI(
+            keys.VertexProject(), keys.VertexRegion(), keys.VertexGAC()
+        ),
+        ocrengine.Tesseract(),
+    )
+    alt.parseFile(HTML_INFINITY)
 
-    ## PARSEFILE TEST
-    altHTML.parseFile(HTML1)
-
-    ## GETALLIMGS & SETALT TEST
-    imgs = altHTML.getNoAltImgs()
+    imgs = alt.getAllImgs()
     print(imgs)
+    l = alt.genAltAssociations(imgs, False, False, True, True)
+    print(l)
+
 
 def testEPUB():
     print("TESTING EPUB")
-    altEPUB:alttext.AltTextEPUB = alttext.AltTextEPUB()
+    altEPUB: alttext.AltTextEPUB = alttext.AltTextEPUB()
 
-    altEPUB.parseFile(EPUB2)    
+    altEPUB.parseFile(EPUB2)
     imgs = altEPUB.getNoAltImgs()
     print(imgs)
-    # img = imgs[0]
-    # print(img)
-    # src = img.attrs["src"]
-    # altEPUB.setAlt(src, "TEST ALT")
-    # print(altEPUB.getAllImgs())
+
 
 if __name__ == "__main__":
-    # testHTML()
-    testEPUB()
+    testHTML()
+    # testEPUB()
