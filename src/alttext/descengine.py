@@ -11,7 +11,26 @@ from vertexai.vision_models import ImageTextModel, Image
 class DescEngine(ABC):
     @abstractmethod
     def genDesc(self, imgData: bytes, src: str, context: str = None) -> str:
+        """Generates description for an image.
+
+        Args:
+            imgData (bytes): Image data in bytes.
+            src (str): Source of image.
+            context (str, optional): Context of image. See getContext in alttext for more information. Defaults to None.
+
+        Returns:
+            str: _description_
+        """
         pass
+
+
+### TEST CLASS
+class _TDescEngine(DescEngine):
+    def __init__(self):
+        return None
+
+    def genDesc(self, imgData: bytes, src: str, context: str = None) -> str:
+        return f"TEST {src}"
 
 
 ### IMPLEMENTATIONS
@@ -40,6 +59,30 @@ class ReplicateMiniGPT4API(DescEngine):
 
         dataurl = f"data:image/{ext};base64,{base64_utf8_str}"
         output = replicate.run(model, input={"image": dataurl, "prompt": prompt})
+        return output
+
+
+class ReplicateClipAPI(DescEngine):
+    def __init__(self, key: str) -> None:
+        self.__setKey(key)
+        return None
+
+    def __getKey(self) -> str:
+        if not hasattr(self, "data") or self.key == None:
+            raise Exception("no key set. please use ._setKey(key:str)")
+        return self.key
+
+    def __setKey(self, key: str) -> bool:
+        self.key = key
+        os.environ["REPLICATE_API_TOKEN"] = key
+        return True
+
+    def genDesc(self, imgData: bytes, src: str, context: str = None) -> str:
+        base64_utf8_str = base64.b64encode(imgData).decode("utf-8")
+        model = "rmokady/clip_prefix_caption:9a34a6339872a03f45236f114321fb51fc7aa8269d38ae0ce5334969981e4cd8"
+        ext = src.split(".")[-1]
+        dataurl = f"data:image/{ext};base64,{base64_utf8_str}"
+        output = replicate.run(model, input={"image": dataurl})
         return output
 
 
@@ -74,11 +117,3 @@ class GoogleVertexAPI(DescEngine):
             language="en",
         )
         return captions[0]
-
-
-class __FlowTest(DescEngine):
-    def __init__(self):
-        return None
-
-    def genDesc(self, imgData: bytes, src: str, context: str = None) -> str:
-        return f"TEST {src}"
