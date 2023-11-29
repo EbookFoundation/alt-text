@@ -28,12 +28,20 @@ def testHTML():
         # descengine.GoogleVertexAPI(
         #     keys.VertexProject(), keys.VertexRegion(), keys.VertexGAC()
         # ),
-        # descengine.ReplicateMiniGPT4API(keys.ReplicateEricKey()),
-        descengine.ReplicateClipAPI(keys.ReplicateEricKey()),
-        ocrengine.Tesseract(),
-        langengine.PrivateGPT(HOST1),
+        descengine.ReplicateAPI(keys.ReplicateEricKey(), "blip"),
+        # ocrengine.Tesseract(),
+        # langengine.PrivateGPT(HOST1),
+        options={"version": 1},
     )
     alt.parseFile(HTML_HUNTING)
+    imgs = alt.getAllImgs()
+    # src = imgs[5].attrs["src"]
+    # print(src)
+
+    # desc = alt.genDesc(alt.getImgData(src), src)
+    # print(desc)
+    associations = alt.genAltAssociations(imgs)
+    print(associations)
 
 
 if __name__ == "__main__":

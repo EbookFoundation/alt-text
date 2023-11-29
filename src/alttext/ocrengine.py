@@ -22,12 +22,6 @@ class OCREngine(ABC):
         pass
 
 
-### TEST CLASS
-class _TOCREngine(OCREngine):
-    def genChars(self, imgData: bytes, src: str, context: str = None) -> str:
-        return f"TEST {src}"
-
-
 ### IMPLEMENTATIONS
 class Tesseract(OCREngine):
     def __init__(self) -> None:
