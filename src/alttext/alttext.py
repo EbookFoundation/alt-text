@@ -610,7 +610,7 @@ class AltTextHTML(AltText):
         for tag in tags:
             thread = Thread(
                 target=genAppend,
-                args=(tag),
+                args=(tag,),
             )
             thread.start()
             threads.append(thread)
