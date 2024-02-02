@@ -52,7 +52,7 @@ The Alt-Text project is developed for the [Free Ebook Foundation](https://ebookf
 
 As Ebooks become a more prominant way to consume written materials, it only becomes more important for them to be accessible to all people. Alternative text (aka alt-text) in Ebooks are used as a way for people to understand images in Ebooks if they are unable to use images as intended (e.g. a visual impaired person using a screen reader to read an Ebook).
 
-While this feature exists, it is still not fully utilized and many Ebooks lack alt-text in some, or even all their images. To illustrate this, the [Gutenberg Project](https://gutenberg.org/), the creator of the Ebook and now a distributor of Public Domain Ebooks, have over 70,000 Ebooks in their collection and of those, there are about 170,000 images without alt-text.
+While this feature exists, it is still not fully utilized and many Ebooks lack alt-text in some, or even all their images. To illustrate this, the [Gutenberg Project](https://gutenberg.org/), the creator of the Ebook and now a distributor of Public Domain Ebooks, have over 70,000 Ebooks in their collection and of those, there are about 470,000 images without alt-text.
 
 The Alt-Text project's goal is to use the power of AI, Automation, and the Internet to craft a solution capable of automatically generating descriptions for images lacking alt-text in Ebooks, closing the accessibility gap and improving collections, such as the [Gutenberg Project](https://gutenberg.org/).
 
