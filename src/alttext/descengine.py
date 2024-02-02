@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 import base64
 import os
+import shutil
+import subprocess
+import uuid
 
 import replicate
 import vertexai
@@ -24,6 +27,7 @@ class DescEngine(ABC):
         pass
 
 
+### IMPLEMENTATIONS
 REPLICATE_MODELS = {
     "blip": "salesforce/blip:2e1dddc8621f72155f24cf2e0adbde548458d3cab9f00c0139eea840d0ac4746",
     "clip_prefix_caption": "rmokady/clip_prefix_caption:9a34a6339872a03f45236f114321fb51fc7aa8269d38ae0ce5334969981e4cd8",
@@ -34,7 +38,6 @@ REPLICATE_MODELS = {
 }
 
 
-### IMPLEMENTATIONS
 class ReplicateAPI(DescEngine):
     def __init__(self, key: str, model: str = "blip") -> None:
         self.__setKey(key)
@@ -71,6 +74,30 @@ class ReplicateAPI(DescEngine):
         dataurl = f"data:image/{ext};base64,{base64_utf8_str}"
         output = replicate.run(model, input={"image": dataurl, "prompt": prompt})
         return output
+
+
+class BlipLocal(DescEngine):
+    def __init__(self, path: str) -> None:
+        self.__setPath(path)
+        return None
+
+    def __setPath(self, path: str) -> str:
+        self.path = path
+        return self.path
+
+    def genDesc(self, imgData: bytes, src: str, context: str = None) -> str:
+        folderName = uuid.uuid4()
+        ext = src.split(".")[-1]
+        os.makedirs(f"{self.path}/{folderName}")
+        open(f"{self.path}/{folderName}/image.{ext}", "wb+").write(imgData)
+        subprocess.call(
+            f"python {self.path}/inference.py -i ./{folderName} --batch 1 --gpu 0",
+            cwd=f"{self.path}",
+        )
+        desc = open(f"{self.path}/{folderName}/0_captions.txt", "r").read()
+        shutil.rmtree(f"{self.path}/{folderName}")
+        desc = desc.split(",")
+        return desc[1]
 
 
 class GoogleVertexAPI(DescEngine):

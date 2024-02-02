@@ -24,24 +24,33 @@ HOST1 = "http://127.0.0.1:8001"
 def testHTML():
     print("TESTING HTML")
 
+    # alt: alttext.AltTextHTML = alttext.AltTextHTML(
+    #     # descengine.ReplicateAPI(keys.ReplicateEricKey(), "blip"),
+    #     # ocrengine.Tesseract(),
+    #     # langengine.PrivateGPT(HOST1),
+    # )
+
+    # alt: alttext.AltTextHTML = alttext.AltTextHTML(
+    #     descengine.BlipLocal("C:/Users/dacru/Desktop/Codebase/ALT/image-captioning"),
+    #     options={"version": 1},
+    # )
+
     alt: alttext.AltTextHTML = alttext.AltTextHTML(
-        # descengine.GoogleVertexAPI(
-        #     keys.VertexProject(), keys.VertexRegion(), keys.VertexGAC()
-        # ),
-        descengine.ReplicateAPI(keys.ReplicateEricKey(), "blip"),
-        # ocrengine.Tesseract(),
-        # langengine.PrivateGPT(HOST1),
-        options={"version": 1},
+        descengine.BlipLocal("C:/Users/dacru/Desktop/Codebase/ALT/image-captioning"),
+        ocrengine.Tesseract(),
+        langengine.PrivateGPT(HOST1),
     )
+
     alt.parseFile(HTML_HUNTING)
     imgs = alt.getAllImgs()
-    # src = imgs[5].attrs["src"]
-    # print(src)
+    src = imgs[4].attrs["src"]
+    print(src)
+    print(alt.genAltText(src))
 
     # desc = alt.genDesc(alt.getImgData(src), src)
     # print(desc)
-    associations = alt.genAltAssociations(imgs)
-    print(associations)
+    # associations = alt.genAltAssociations(imgs)
+    # print(associations)
 
 
 if __name__ == "__main__":
