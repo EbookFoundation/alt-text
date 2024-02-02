@@ -10,7 +10,7 @@ requires = [
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src"] # Adjust this based on your project structure
+packages = ["src/alttext"]
 
 [project]
 name = "alt-text"
