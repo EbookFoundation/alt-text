@@ -1,5 +1,12 @@
 [build-system]
-requires = ["hatchling", "beautifulsoup4"]
+requires = [
+    "hatchling",
+    "beautifulsoup4",
+    "ebooklib",
+    "pytesseract",
+    "google-cloud-aiplatform",
+    "replicate",
+]
 build-backend = "hatchling.build"
 
 [project]
