@@ -1,0 +1,5 @@
+beautifulsoup4
+EbookLib
+replicate
+google-cloud-aiplatform
+pytesseract

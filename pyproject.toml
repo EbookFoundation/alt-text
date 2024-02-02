@@ -9,9 +9,12 @@ requires = [
 ]
 build-backend = "hatchling.build"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/alttext"]
+
 [project]
 name = "alt-text"
-version = "0.1.0"
+version = "0.2.0"
 authors = [
     { name = "Free Ebook Foundation", email = "eric@ebookfoundation.org" },
     { name = "Jack Byrne", email = "jbyrne4@stevens.edu" },
