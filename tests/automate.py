@@ -1,44 +1,67 @@
+#This file will be the actual generation of images and benchmarking of the system
 
+#Run getbooks.py then downloadbooks.py with whatever .txt is being used then use those to move into the next steps
 import os
-from pathlib import Path
-from alttext import genAltTextV2
-from descengine import genDesc
-from ocrengine import genChars
-from langengine import refineDesc, refineOCR #need to implement these
+import bs4
+from bs4 import BeautifulSoup
+import time
+from ..src.alttext.alttext import getImgData, getContext, genDesc, genChars
+from ..src.alttext.langengine import refineAlt
 
-def read_paths_from_file(file_path):
-    """Reads image paths from a given file and returns a list of tuples containing book number and path."""
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-    paths = [line.strip().split('\t') for line in lines]
-    return paths
+class BookParser:
+    def __init__(self):
+        self.filepath = ""
+        self.filename = ""
+        self.filedir = ""
 
-def generate_alt_text_for_images(image_paths):
-    """
-    Generates alt-text for a list of image paths. Each path is a tuple containing the book number and the image path.
-    """
-    alt_texts = []
-    for path_info in image_paths:
-        book_num, image_path = path_info.split('\t')
-        full_image_path = f"cache/epub/{book_num}/images/{image_path}"
+    def parse(self, html):
+        # Parse the HTML content with BeautifulSoup
+        return BeautifulSoup(html, 'html.parser')
 
-        # Generate alt-text using the genAltTextV2 method
-        alt_text = alt_text.genAltTextV2(full_image_path) #I don't think I am doing this right
+    def parseFile(self, filepath: str) -> bs4.BeautifulSoup:
+        with open(filepath, encoding="utf8") as html:
+            self.filepath = filepath
+            l = filepath.split("/")
+            self.filename = l.pop()
+            self.filedir = "/".join(l) + "/"
+            return self.parse(html)
 
-        alt_texts.append((book_num, image_path, alt_text))
+def process_books(extraction_folder):
+    parser = BookParser()
 
-    return alt_texts
+    # Iterate through each book's directory
+    for book_id in os.listdir(extraction_folder):
+        book_path = os.path.join(extraction_folder, book_id)
+        if os.path.isdir(book_path):
+            # Iterate through files in the book's directory
+            for filename in os.listdir(book_path):
+                filepath = os.path.join(book_path, filename)
+                # Check if the file is an HTML file
+                if filepath.endswith(".html"):
+                    # Use the parseFile method to parse the HTML file
+                    soup = parser.parseFile(filepath)
+                    # Now `soup` contains the parsed HTML file for further processing
 
-def main():
-    input_file = '../empty_alt_text_sample.text' # Update this path
-    output_file = '../generated_alt_texts.txt' # Update this path
+                    # Example of further processing: print the title of the HTML document
+                    title = soup.find('title').get_text() if soup.find('title') else 'No title'
+                    print(f"Book ID: {book_id}, File: {filename}, Title: {title}")
 
-    image_paths = read_paths_from_file(input_file)
-    alt_texts = generate_alt_text_for_images(image_paths)
+#Use genAltTextV2
+#ADD benchmark time stamps
+def genAltTextV2(self, src: str) -> str:
+        imgdata = self.getImgData(src)
+        context = [None, None]
+        if self.options["withContext"]:
+            context = self.getContext(self.getImg(src))
+        desc = self.genDesc(imgdata, src, context)
 
-    with open(output_file, 'w') as file:
-        for alt_text in alt_texts:
-            file.write(f'{alt_text}\n')
+        chars = ""
+        if self.ocrEngine != None:
+            chars = self.genChars(imgdata, src).strip()
 
-if __name__ == '__main__':
-    main()
+        if self.langEngine == None:
+            raise Exception("To use version 2, you must have a langEngine set.")
+
+        return self.langEngine.refineAlt(desc, chars, context, None)
+
+#Add .csv generation for benchmark variables
