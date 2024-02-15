@@ -2,9 +2,9 @@ import sys
 
 sys.path.append("../")
 import src.alttext.alttext as alttext
-import src.alttext.descengine as descengine
-import src.alttext.ocrengine as ocrengine
-import src.alttext.langengine as langengine
+from src.alttext.descengine.bliplocal import BlipLocal
+from src.alttext.ocrengine.tesseract import Tesseract
+from src.alttext.langengine.privategpt import PrivateGPT
 import keys
 
 # HTML BOOK FILEPATHS
@@ -23,22 +23,10 @@ HOST1 = "http://127.0.0.1:8001"
 
 def testHTML():
     print("TESTING HTML")
-
-    # alt: alttext.AltTextHTML = alttext.AltTextHTML(
-    #     # descengine.ReplicateAPI(keys.ReplicateEricKey(), "blip"),
-    #     # ocrengine.Tesseract(),
-    #     # langengine.PrivateGPT(HOST1),
-    # )
-
-    # alt: alttext.AltTextHTML = alttext.AltTextHTML(
-    #     descengine.BlipLocal("C:/Users/dacru/Desktop/Codebase/ALT/image-captioning"),
-    #     options={"version": 1},
-    # )
-
     alt: alttext.AltTextHTML = alttext.AltTextHTML(
-        descengine.BlipLocal("C:/Users/dacru/Desktop/Codebase/ALT/image-captioning"),
-        ocrengine.Tesseract(),
-        langengine.PrivateGPT(HOST1),
+        BlipLocal("C:/Users/dacru/Desktop/ALT/image-captioning"),
+        Tesseract(),
+        PrivateGPT(HOST1),
     )
 
     alt.parseFile(HTML_HUNTING)

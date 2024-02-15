@@ -6,9 +6,9 @@ import bs4
 import ebooklib
 from ebooklib import epub
 
-from .descengine import DescEngine
-from .ocrengine import OCREngine
-from .langengine import LangEngine
+from .descengine.descengine import DescEngine
+from .ocrengine.ocrengine import OCREngine
+from .langengine.langengine import LangEngine
 
 
 DEFOPTIONS = {
@@ -523,7 +523,7 @@ class AltTextHTML(AltText):
         try:
             text = elem.text.strip()
             while text == "":
-                elem = elem.previous_element
+                elem = elem.next_element
                 text = elem.text.strip()
             context[1] = text
         except:
@@ -564,7 +564,6 @@ class AltTextHTML(AltText):
         if self.options["withContext"]:
             context = self.getContext(self.getImg(src))
         desc = self.genDesc(imgdata, src, context)
-
         chars = ""
         if self.ocrEngine != None:
             chars = self.genChars(imgdata, src).strip()
