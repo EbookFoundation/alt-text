@@ -1,0 +1,4 @@
+86	cache/epub/86/images/32-413.jpg
+86	cache/epub/86/images/cover.jpg
+86	cache/epub/86/images/frontispiece.jpg
+86	cache/epub/86/images/titlepage.jpg
