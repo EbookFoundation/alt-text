@@ -5,7 +5,6 @@
 import os
 
 input_file = '../empty_alt_text_sample.TXT' #The file path of whatever initial .txt you are working with
-n = 5 #Constant number of books to be iterated through
 output_folder = 'book_outputs'
 
 def create_individual_book_files(input_file, output_folder):
