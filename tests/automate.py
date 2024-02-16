@@ -1,54 +1,28 @@
-#This file will be the actual generation of images and benchmarking of the system
+# automate.py - tests the generation of images and benchmarks the systems
+# run getbooks.py then downloadbooks.py with input (.txt file), use output for next steps
 
-#Run getbooks.py then downloadbooks.py with whatever .txt is being used then use those to move into the next steps
+# imports
 import os
+import time
+import csv
 import bs4
 from bs4 import BeautifulSoup
-import time
-from ..src.alttext.alttext import getImgData, getContext, genDesc, genChars
-from ..src.alttext.langengine import refineAlt
-import csv
+from ..src.alttext.alttext import AltTextHTML
+from ..src.alttext.langengine import PrivateGPT
 
-class BookParser:
+# access downloaded books and go thru all of them
+# 1. parse html file to find img src to get the before and after context (using get context funct)
+# 2. generate alt text using genAltTextV2 (add benchmarking at some point)
+# 3. save alt text and benchmarking in a csv (see csv file headings)
+
+# iterate thru downloaded_books folder, pass html into parseFile
+
+class AltTextGenerator(AltTextHTML):
+    # uses the class from alttext.py
+    # adds relevant benchmarking and saving methods
+
     def __init__(self):
-        self.filepath = ""
-        self.filename = ""
-        self.filedir = ""
-
-    def parse(self, html):
-        # Parse the HTML content with BeautifulSoup
-        return BeautifulSoup(html, 'html.parser')
-
-    def parseFile(self, filepath: str) -> bs4.BeautifulSoup:
-        with open(filepath, encoding="utf8") as html:
-            self.filepath = filepath
-            l = filepath.split("/")
-            self.filename = l.pop()
-            self.filedir = "/".join(l) + "/"
-            return self.parse(html)
-
-def process_books(extraction_folder):
-    parser = BookParser()
-
-    # Iterate through each book's directory
-    for book_id in os.listdir(extraction_folder):
-        book_path = os.path.join(extraction_folder, book_id)
-        if os.path.isdir(book_path):
-            # Iterate through files in the book's directory
-            for filename in os.listdir(book_path):
-                filepath = os.path.join(book_path, filename)
-                # Check if the file is an HTML file
-                if filepath.endswith(".html"):
-                    # Use the parseFile method to parse the HTML file
-                    soup = parser.parseFile(filepath)
-                    # Now `soup` contains the parsed HTML file for further processing
-
-                    # Example of further processing: print the title of the HTML document
-                    title = soup.find('title').get_text() if soup.find('title') else 'No title'
-                    print(f"Book ID: {book_id}, File: {filename}, Title: {title}")
-
-class AltTextGenerator:
-    def __init__(self):
+        super().__init__()
         self.benchmark_records = []
 
     #Use genAltTextV2
@@ -114,10 +88,13 @@ class AltTextGenerator:
         return refined_desc
 
     #CSV generation
-    def generate_csv(benchmark_records, csv_file_path):
+    def generate_csv(self, csv_file_path, benchmark_records):
         if not benchmark_records:
-            print("No benchmark data available.")
-            return
+            benchmark_records = self.benchmark_records
+
+            if not benchmark_records:
+                print("No benchmark data available.")
+                return
 
         # Determine the CSV field names from the keys of the first record
         fieldnames = benchmark_records[0].keys()
@@ -128,3 +105,31 @@ class AltTextGenerator:
             for record in benchmark_records:
                 writer.writerow(record)
         print(f"CSV file has been generated at: {csv_file_path}")
+
+def automate_process(extr_folder : str):
+    # Iterate through all images in a folder to produce a table (csv) with benchmarking
+
+    generator = AltTextGenerator()
+
+    # Iterate thru each book in folder (ex. downloaded_books)
+    for book_id in os.listdir(extr_folder):
+        book_path = os.path.join(extr_folder, book_id)
+        if os.path.isdir(book_path):
+
+            # Iterate thru files in the book's directory
+            for filename in os.listdir(book_path):
+                filepath = os.path.join(book_path, filename)
+
+                # Check if the file is an HTML file
+                if filepath.endswith(".html"):
+
+                    # Use the parseFile method to parse the HTML file for the genAltText function
+                    soup = generator.parseFile(filepath)
+                    generator.genAltText(soup)
+
+    generator.generate_csv('test_benchmark.csv', generator.benchmark_records)
+
+if __name__ == "__main__":
+    print("Running automate.py")
+
+    automate_process('downloaded_books')
