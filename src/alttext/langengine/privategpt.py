@@ -15,7 +15,7 @@ class PrivateGPT(LangEngine):
             "include_sources": False,
             "prompt": prompt,
             "stream": False,
-            "use_context": True,
+            "use_context": False,
         }
         r = requests.post(f"{self.host}/v1/completions", json=body)
         r = r.json()

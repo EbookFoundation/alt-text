@@ -428,8 +428,8 @@ class AltTextHTML(AltText):
 
     def parseFile(self, filepath: str) -> bs4.BeautifulSoup:
         with open(filepath, encoding="utf8") as html:
-            self.filepath = filepath
-            l = filepath.split("/")
+            self.filepath = filepath.replace("\\", "/")
+            l = self.filepath.split("/")
             self.filename = l.pop()
             self.filedir = "/".join(l) + "/"
             return self.parse(html)
