@@ -3,12 +3,15 @@
 
 # imports
 import os
+import sys
 import time
 import csv
 import bs4
 from bs4 import BeautifulSoup
-from ..src.alttext.alttext import AltTextHTML
-from ..src.alttext.langengine import PrivateGPT
+import importlib
+sys.path.append("c:/Users/ketha/Code/Senior D") #This will need to be changed system to system
+AltTextHTML = importlib.import_module("alt-text.src.alttext.alttext").AltTextHTML
+PrivateGPT = importlib.import_module("alt-text.src.alttext.langengine").PrivateGPT
 
 # access downloaded books and go thru all of them
 # 1. parse html file to find img src to get the before and after context (using get context funct)
