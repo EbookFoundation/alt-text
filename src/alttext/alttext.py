@@ -516,7 +516,6 @@ class AltTextHTML(AltText):
                 text = elem.text.strip()
             context[0] = text
         except:
-            print("error 0")
             context[0] = None
         elem = tag
         text = ""
@@ -527,9 +526,7 @@ class AltTextHTML(AltText):
                 text = elem.text.strip()
             context[1] = text
         except:
-            print("error 1")
             context[1] = None
-        print(context)
         return context
 
     def genChars(self, imgData: bytes, src: str) -> str:
