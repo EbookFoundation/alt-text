@@ -5,8 +5,9 @@ import pytesseract
 from .ocrengine import OCREngine
 
 class Tesseract(OCREngine):
-    def __init__(self) -> None:
-        self.customPath = None
+    def __init__(self, path:str = None) -> None:
+        if (path != None):
+            self._setTesseract(path)
         return None
 
     def _setTesseract(self, path: str) -> bool:
