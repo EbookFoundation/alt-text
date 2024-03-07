@@ -12,6 +12,10 @@ import importlib
 sys.path.append("c:/Users/ketha/Code/Senior D") #This will need to be changed system to system
 AltTextHTML = importlib.import_module("alt-text.src.alttext.alttext").AltTextHTML
 PrivateGPT = importlib.import_module("alt-text.src.alttext.langengine").PrivateGPT
+descengine_path = 'c:/Users/ketha/Code/Senior D/alt-text/src/alttext/descengine.py'
+
+
+
 
 # access downloaded books and go thru all of them
 # 1. parse html file to find img src to get the before and after context (using get context funct)
@@ -24,10 +28,10 @@ class AltTextGenerator(AltTextHTML):
     # uses the class from alttext.py
     # adds relevant benchmarking and saving methods
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, api_key, descengine):
+        super().__init__(descengine)
         self.benchmark_records = []
-
+        self.api_key = api_key
     #Use genAltTextV2
     #ADD benchmark time stamps
     def genAltTextV2(self, src: str) -> str:
@@ -109,26 +113,35 @@ class AltTextGenerator(AltTextHTML):
                 writer.writerow(record)
         print(f"CSV file has been generated at: {csv_file_path}")
 
+def import_descengine():
+    #Key Stuff
+    spec = importlib.util.spec_from_file_location("descengine", descengine_path)
+    descengine = importlib.util.module_from_spec(spec)
+    sys.modules["descengine"] = descengine
+    spec.loader.exec_module(descengine)
+    return descengine
+
 def automate_process(extr_folder : str):
     # Iterate through all images in a folder to produce a table (csv) with benchmarking
+    descengine = import_descengine()
+    minigpt4_key = descengine.REPLICATE_MODELS['minigpt4']
 
-    generator = AltTextGenerator()
+    generator = AltTextGenerator(minigpt4_key, descengine)
 
     # Iterate thru each book in folder (ex. downloaded_books)
-    for book_id in os.listdir(extr_folder):
-        book_path = os.path.join(extr_folder, book_id)
-        if os.path.isdir(book_path):
+    if os.path.exists(extr_folder):
+        for book_id in os.listdir(extr_folder):
+            book_path = os.path.join(extr_folder, book_id)
+            if os.path.isdir(book_path):
+                for filename in os.listdir(book_path):
+                    filepath = os.path.join(book_path, filename)
 
-            # Iterate thru files in the book's directory
-            for filename in os.listdir(book_path):
-                filepath = os.path.join(book_path, filename)
+                    # Check if the file is an HTML file
+                    if filepath.endswith(".html"):
 
-                # Check if the file is an HTML file
-                if filepath.endswith(".html"):
-
-                    # Use the parseFile method to parse the HTML file for the genAltText function
-                    soup = generator.parseFile(filepath)
-                    generator.genAltText(soup)
+                        # Use the parseFile method to parse the HTML file for the genAltText function
+                        soup = generator.parseFile(filepath)
+                        generator.genAltText(soup)
 
     generator.generate_csv('test_benchmark.csv', generator.benchmark_records)
 

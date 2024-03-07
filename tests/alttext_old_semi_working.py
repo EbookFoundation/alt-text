@@ -6,10 +6,9 @@ import bs4
 import ebooklib
 from ebooklib import epub
 
-
-from descengine import DescEngine
-from ocrengine import OCREngine
-from langengine import LangEngine
+from .descengine import DescEngine
+from .ocrengine import OCREngine
+from .langengine import LangEngine
 
 
 DEFOPTIONS = {
@@ -84,7 +83,7 @@ class AltText(ABC):
 
     # PARSING METHODS
     @abstractmethod
-    def parse(self, data: str) -> bs4.BeautifulSoup | epub.EpubBook:
+    def parse(self, data: str) -> typing.Union[bs4.BeautifulSoup, epub.EpubBook]:
         """Parses data into a BeautifulSoup or EpubBook object.
 
         Args:
@@ -96,7 +95,7 @@ class AltText(ABC):
         pass
 
     @abstractmethod
-    def parseFile(self, filepath: str) -> bs4.BeautifulSoup | epub.EpubBook:
+    def parseFile(self, filepath: str) -> typing.Union[bs4.BeautifulSoup, epub.EpubBook]:
         """Parses data from a file into a BeautifulSoup or EpubBook object.
 
         Args:
@@ -163,7 +162,7 @@ class AltText(ABC):
         pass
 
     @abstractmethod
-    def export(self) -> str | epub.EpubBook:
+    def export(self) -> typing.Union[str, epub.EpubBook]:
         """Exports the current data.
 
         Returns:
@@ -429,8 +428,8 @@ class AltTextHTML(AltText):
 
     def parseFile(self, filepath: str) -> bs4.BeautifulSoup:
         with open(filepath, encoding="utf8") as html:
-            self.filepath = filepath.replace("\\", "/")
-            l = self.filepath.split("/")
+            self.filepath = filepath
+            l = filepath.split("/")
             self.filename = l.pop()
             self.filedir = "/".join(l) + "/"
             return self.parse(html)
@@ -517,17 +516,20 @@ class AltTextHTML(AltText):
                 text = elem.text.strip()
             context[0] = text
         except:
+            print("error 0")
             context[0] = None
         elem = tag
         text = ""
         try:
             text = elem.text.strip()
             while text == "":
-                elem = elem.next_element
+                elem = elem.previous_element
                 text = elem.text.strip()
             context[1] = text
         except:
+            print("error 1")
             context[1] = None
+        print(context)
         return context
 
     def genChars(self, imgData: bytes, src: str) -> str:
@@ -562,6 +564,7 @@ class AltTextHTML(AltText):
         if self.options["withContext"]:
             context = self.getContext(self.getImg(src))
         desc = self.genDesc(imgdata, src, context)
+
         chars = ""
         if self.ocrEngine != None:
             chars = self.genChars(imgdata, src).strip()
