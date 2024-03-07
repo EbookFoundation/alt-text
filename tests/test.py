@@ -3,8 +3,10 @@ import sys
 sys.path.append("../")
 import src.alttext.alttext as alttext
 from src.alttext.descengine.bliplocal import BlipLocal
+from src.alttext.descengine.replicateapi import ReplicateAPI
 from src.alttext.ocrengine.tesseract import Tesseract
 from src.alttext.langengine.privategpt import PrivateGPT
+from src.alttext.langengine.openaiapi import OpenAIAPI
 import keys
 
 # HTML BOOK FILEPATHS
@@ -24,14 +26,16 @@ HOST1 = "http://127.0.0.1:8001"
 def testHTML():
     print("TESTING HTML")
     alt: alttext.AltTextHTML = alttext.AltTextHTML(
-        BlipLocal("C:/Users/dacru/Desktop/ALT/image-captioning"),
+        # BlipLocal("C:/Users/dacru/Desktop/ALT/image-captioning"),
+        ReplicateAPI(keys.ReplicateEricKey()),
         Tesseract(),
-        PrivateGPT(HOST1),
+        # PrivateGPT(HOST1),
+        OpenAIAPI(keys.OpenAIKey(), "gpt-3.5-turbo"),
     )
 
     alt.parseFile(HTML_HUNTING)
     imgs = alt.getAllImgs()
-    src = imgs[4].attrs["src"]
+    src = imgs[7].attrs["src"]
     print(src)
     print(alt.genAltText(src))
 
