@@ -3,3 +3,4 @@ EbookLib
 replicate
 google-cloud-aiplatform
 pytesseract
+openai
