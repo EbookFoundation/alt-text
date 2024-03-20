@@ -11,8 +11,8 @@ from bs4 import BeautifulSoup
 import importlib
 sys.path.append("c:/Users/ketha/Code/Senior D") #This will need to be changed system to system
 AltTextHTML = importlib.import_module("alt-text.src.alttext.alttext").AltTextHTML
-PrivateGPT = importlib.import_module("alt-text.src.alttext.langengine").PrivateGPT
-descengine_path = 'c:/Users/ketha/Code/Senior D/alt-text/src/alttext/descengine.py'
+PrivateGPT = importlib.import_module("alt-text.src.alttext.langengine.langengine").PrivateGPT
+descengine_path = 'c:/Users/ketha/Code/Senior D/alt-text/src/alttext/descengine/descengine.py'
 
 
 
@@ -24,6 +24,8 @@ descengine_path = 'c:/Users/ketha/Code/Senior D/alt-text/src/alttext/descengine.
 
 # iterate thru downloaded_books folder, pass html into parseFile
 
+
+
 class AltTextGenerator(AltTextHTML):
     # uses the class from alttext.py
     # adds relevant benchmarking and saving methods
@@ -34,18 +36,27 @@ class AltTextGenerator(AltTextHTML):
         self.api_key = api_key
     #Use genAltTextV2
     #ADD benchmark time stamps
-    def genAltTextV2(self, src: str) -> str:
+    def genAltTextV2(self, src: str, book_id, image_path, book_path) -> str:
         # Start total timing
         total_start_time = time.time()
 
+        with open('example.txt', 'w', encoding="utf-8") as file:
+            #contents = file.read()
+            file.write(str(src))
+
+
         # Image data extraction timing
         imgdata_start_time = time.time()
+        print("starting imaging")
+        time.sleep(3)
         imgdata = self.getImgData(src)
         imgdata_end_time = time.time()
         imgdata_total_time = imgdata_end_time - imgdata_start_time
 
         # Context extraction timing
         context = [None, None]
+        print("starting contexting")
+        time.sleep(3)
         context_start_time = time.time()
         if self.options["withContext"]:
             context = self.getContext(self.getImg(src))
@@ -56,12 +67,16 @@ class AltTextGenerator(AltTextHTML):
 
         # Description generation timing
         genDesc_start_time = time.time()
+        print("starting desc")
+        time.sleep(3)
         desc = self.genDesc(imgdata, src, context)
         genDesc_end_time = time.time()
         genDesc_total_time = genDesc_end_time - genDesc_start_time
 
         # OCR processing timing
         ocr_start_time = time.time()
+        print("starting ocr")
+        time.sleep(3)
         chars = ""
         if self.ocrEngine is not None:
             chars = self.genChars(imgdata, src).strip()
@@ -70,6 +85,8 @@ class AltTextGenerator(AltTextHTML):
 
         # Refinement processing timing
         refine_start_time = time.time()
+        print("starting refinement")
+        time.sleep(3)
         if self.langEngine is None:
             raise Exception("To use version 2, you must have a langEngine set.")
         refined_desc = self.langEngine.refineAlt(desc, chars, context, None)
@@ -80,14 +97,26 @@ class AltTextGenerator(AltTextHTML):
         total_end_time = time.time()
         total_overall_time = total_end_time - total_start_time
 
+
         #Record dictionary to store all the timing data
         record = {
-            "Image Data Extraction Time": imgdata_total_time,
-            "Context Extraction Time": context_total_time,
-            "Description Generation Time": genDesc_total_time,
-            "OCR Processing Time": ocr_total_time,
-            "Refinement Processing Time": refine_total_time,
-            "Total Overall Time": total_overall_time
+            "Book": book_id,
+            "Image": image_path,
+            "Path": book_path,
+            "Status": True, #Set false if failed, set true is worked
+            "Before Context": beforeContext,
+            "After Context": afterContext,
+            "genDesc": desc,
+            "genDesc-Start": genDesc_start_time,
+            "genDesc-End": genDesc_end_time,
+            "genDesc-Time": genDesc_total_time,
+            "genOCR": chars,
+            "genOCR-Start": ocr_start_time,
+            "genOCR-End": ocr_end_time,
+            "genOCR-Time": ocr_total_time,
+            "refineDesc": refined_desc,
+            "refineDesc-Time": refine_total_time,
+            "Total Time": total_overall_time
         }
         # Add record to benchmark_records for later CSV generation
         self.benchmark_records.append(record)
@@ -132,6 +161,7 @@ def automate_process(extr_folder : str):
     if os.path.exists(extr_folder):
         for book_id in os.listdir(extr_folder):
             book_path = os.path.join(extr_folder, book_id)
+            #alt-text/tests/downloaded_books\120
             if os.path.isdir(book_path):
                 for filename in os.listdir(book_path):
                     filepath = os.path.join(book_path, filename)
@@ -139,13 +169,20 @@ def automate_process(extr_folder : str):
                     # Check if the file is an HTML file
                     if filepath.endswith(".html"):
 
+                        #extra layer should: add an extra layer to iterate through the images tab,
+                        #find that image within the .html
+                        #Go to alt-text generation where it will...
+                        #get the context
+                        #generate the alt-text for that image based on the context and other factors
+
                         # Use the parseFile method to parse the HTML file for the genAltText function
                         soup = generator.parseFile(filepath)
-                        generator.genAltText(soup)
+                        generator.genAltTextV2(soup, book_id, filepath, book_path)
+
 
     generator.generate_csv('test_benchmark.csv', generator.benchmark_records)
 
 if __name__ == "__main__":
     print("Running automate.py")
 
-    automate_process('downloaded_books')
+    automate_process('alt-text/tests/downloaded_books')
