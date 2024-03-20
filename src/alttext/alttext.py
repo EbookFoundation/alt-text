@@ -1,15 +1,15 @@
 from abc import ABC, abstractmethod
 import typing
 from threading import Thread
+import time
 
 import bs4
 import ebooklib
 from ebooklib import epub
 
-
-from descengine import DescEngine
-from ocrengine import OCREngine
-from langengine import LangEngine
+from .descengine.descengine import DescEngine
+from .ocrengine.ocrengine import OCREngine
+from .langengine.langengine import LangEngine
 
 
 DEFOPTIONS = {
@@ -84,7 +84,7 @@ class AltText(ABC):
 
     # PARSING METHODS
     @abstractmethod
-    def parse(self, data: str) -> bs4.BeautifulSoup | epub.EpubBook:
+    def parse(self, data: str) -> typing.Union[bs4.BeautifulSoup, epub.EpubBook]:
         """Parses data into a BeautifulSoup or EpubBook object.
 
         Args:
@@ -96,7 +96,7 @@ class AltText(ABC):
         pass
 
     @abstractmethod
-    def parseFile(self, filepath: str) -> bs4.BeautifulSoup | epub.EpubBook:
+    def parseFile(self, filepath: str) -> typing.Union[bs4.BeautifulSoup, epub.EpubBook]:
         """Parses data from a file into a BeautifulSoup or EpubBook object.
 
         Args:
@@ -163,7 +163,7 @@ class AltText(ABC):
         pass
 
     @abstractmethod
-    def export(self) -> str | epub.EpubBook:
+    def export(self) -> typing.Union[str, epub.EpubBook]:
         """Exports the current data.
 
         Returns:
