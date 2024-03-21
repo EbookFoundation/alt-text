@@ -14,17 +14,11 @@ AltTextHTML = importlib.import_module("alt-text.src.alttext.alttext").AltTextHTM
 PrivateGPT = importlib.import_module("alt-text.src.alttext.langengine.langengine").PrivateGPT
 descengine_path = 'c:/Users/ketha/Code/Senior D/alt-text/src/alttext/descengine/descengine.py'
 
-
-
-
 # access downloaded books and go thru all of them
 # 1. parse html file to find img src to get the before and after context (using get context funct)
 # 2. generate alt text using genAltTextV2 (add benchmarking at some point)
 # 3. save alt text and benchmarking in a csv (see csv file headings)
-
 # iterate thru downloaded_books folder, pass html into parseFile
-
-
 
 class AltTextGenerator(AltTextHTML):
     # uses the class from alttext.py
@@ -37,18 +31,13 @@ class AltTextGenerator(AltTextHTML):
     #Use genAltTextV2
     #ADD benchmark time stamps
     def genAltTextV2(self, src: str, book_id, image_path, book_path) -> str:
+        status = False
         # Start total timing
         total_start_time = time.time()
-
-        with open('example.txt', 'w', encoding="utf-8") as file:
-            #contents = file.read()
-            file.write(str(src))
-
 
         # Image data extraction timing
         imgdata_start_time = time.time()
         print("starting imaging")
-        time.sleep(3)
         imgdata = self.getImgData(src)
         imgdata_end_time = time.time()
         imgdata_total_time = imgdata_end_time - imgdata_start_time
@@ -56,7 +45,6 @@ class AltTextGenerator(AltTextHTML):
         # Context extraction timing
         context = [None, None]
         print("starting contexting")
-        time.sleep(3)
         context_start_time = time.time()
         if self.options["withContext"]:
             context = self.getContext(self.getImg(src))
@@ -68,7 +56,6 @@ class AltTextGenerator(AltTextHTML):
         # Description generation timing
         genDesc_start_time = time.time()
         print("starting desc")
-        time.sleep(3)
         desc = self.genDesc(imgdata, src, context)
         genDesc_end_time = time.time()
         genDesc_total_time = genDesc_end_time - genDesc_start_time
@@ -76,7 +63,6 @@ class AltTextGenerator(AltTextHTML):
         # OCR processing timing
         ocr_start_time = time.time()
         print("starting ocr")
-        time.sleep(3)
         chars = ""
         if self.ocrEngine is not None:
             chars = self.genChars(imgdata, src).strip()
@@ -103,7 +89,7 @@ class AltTextGenerator(AltTextHTML):
             "Book": book_id,
             "Image": image_path,
             "Path": book_path,
-            "Status": True, #Set false if failed, set true is worked
+            "Status": status, #Set false if failed, set true is worked
             "Before Context": beforeContext,
             "After Context": afterContext,
             "genDesc": desc,
@@ -119,6 +105,7 @@ class AltTextGenerator(AltTextHTML):
             "Total Time": total_overall_time
         }
         # Add record to benchmark_records for later CSV generation
+        status = True
         self.benchmark_records.append(record)
 
         return refined_desc
@@ -165,20 +152,27 @@ def automate_process(extr_folder : str):
             if os.path.isdir(book_path):
                 for filename in os.listdir(book_path):
                     filepath = os.path.join(book_path, filename)
+                    htmlpath = filepath #This will be how we go back and reference the html that needs to context
 
                     # Check if the file is an HTML file
-                    if filepath.endswith(".html"):
+                    if htmlpath.endswith(".html"):
+                        soup = generator.parseFile(htmlpath)
 
-                        #extra layer should: add an extra layer to iterate through the images tab,
-                        #find that image within the .html
-                        #Go to alt-text generation where it will...
-                        #get the context
-                        #generate the alt-text for that image based on the context and other factors
+                        image_path = os.path.join(book_path, 'images')
+                        if os.path.exists(image_path):
+                            for image in os.listdir(image_path):
+                                filepath = os.path.join('images', image)
+
+                                if filepath.endswith('.jpg'):
+
+                                    generator.genAltTextV2(soup, book_id, filepath, book_path)
 
                         # Use the parseFile method to parse the HTML file for the genAltText function
-                        soup = generator.parseFile(filepath)
-                        generator.genAltTextV2(soup, book_id, filepath, book_path)
-
+        #extra layer should: add an extra layer to iterate through the images tab,
+        #find that image within the .html
+        #Go to alt-text generation where it will...
+        #get the context
+        #generate the alt-text for that image based on the context and other factors
 
     generator.generate_csv('test_benchmark.csv', generator.benchmark_records)
 
