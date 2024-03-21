@@ -1,11 +1,12 @@
 [build-system]
 requires = [
     "hatchling",
-    "beautifulsoup4",
-    "ebooklib",
-    "pytesseract",
-    "google-cloud-aiplatform",
-    "replicate",
+    "beautifulsoup4==4.12.3",
+    "EbookLib==0.18",
+    "replicate==0.23.1",
+    "google-cloud-aiplatform==1.36.0",
+    "pytesseract==0.3.10",
+    "openai==1.13.3",
 ]
 build-backend = "hatchling.build"
 
@@ -14,7 +15,7 @@ packages = ["src/alttext"]
 
 [project]
 name = "alt-text"
-version = "0.2.3"
+version = "0.2.4"
 authors = [
     { name = "Free Ebook Foundation", email = "eric@ebookfoundation.org" },
     { name = "Jack Byrne", email = "jbyrne4@stevens.edu" },

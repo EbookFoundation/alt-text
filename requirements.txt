@@ -1,6 +1,6 @@
-beautifulsoup4
-EbookLib
-replicate
-google-cloud-aiplatform
-pytesseract
-openai
+beautifulsoup4==4.12.3
+EbookLib==0.18
+replicate==0.23.1
+google-cloud-aiplatform==1.36.0
+pytesseract==0.3.10
+openai==1.13.3
