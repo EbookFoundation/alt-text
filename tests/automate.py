@@ -9,6 +9,7 @@ import csv
 import bs4
 from bs4 import BeautifulSoup
 import importlib
+#TODO Change the sys path to fit your system
 sys.path.append("c:/Users/ketha/Code/Senior D") #This will need to be changed system to system
 AltTextHTML = importlib.import_module("alt-text.src.alttext.alttext").AltTextHTML
 PrivateGPT = importlib.import_module("alt-text.src.alttext.langengine.langengine").PrivateGPT
@@ -167,12 +168,13 @@ def automate_process(extr_folder : str):
 
                                     generator.genAltTextV2(soup, book_id, filepath, book_path)
 
-                        # Use the parseFile method to parse the HTML file for the genAltText function
-        #extra layer should: add an extra layer to iterate through the images tab,
-        #find that image within the .html
-        #Go to alt-text generation where it will...
-        #get the context
-        #generate the alt-text for that image based on the context and other factors
+                                    #TODO read below, I don't know if this functionality is built in already
+                                    # Use the parseFile method to parse the HTML file for the genAltText function
+                                    #extra layer should: add an extra layer to iterate through the images tab,
+                                    #find that image within the .html
+                                    #Go to alt-text generation where it will...
+                                    #get the context
+                                    #generate the alt-text for that image based on the context and other factors
 
     generator.generate_csv('test_benchmark.csv', generator.benchmark_records)
 
