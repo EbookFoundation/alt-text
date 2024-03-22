@@ -4,5 +4,10 @@
 /books
 /tests/outputs
 
+**/empty_alt_text.txt
+**/empty_alt_text_sample.txt
+**/book_outputs
+**/downloaded_books
+
 **/keys.py
 **/vertex-key.json
