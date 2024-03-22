@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class LangEngine(ABC):
     @abstractmethod
     def _completion(self, prompt: str) -> str:

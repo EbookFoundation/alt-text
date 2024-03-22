@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class OCREngine(ABC):
     @abstractmethod
     def genChars(self, imgData: bytes, src: str, context: str = None) -> str:

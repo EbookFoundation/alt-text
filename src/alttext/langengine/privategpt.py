@@ -2,6 +2,7 @@ import requests
 
 from .langengine import LangEngine
 
+
 class PrivateGPT(LangEngine):
     def __init__(self, host) -> None:
         self.host = host
