@@ -10,7 +10,7 @@ download_folder = "downloaded_books/download_files"
 extraction_folder = "downloaded_books"
 
 
-def download_and_unzip_books(folder_path, download_folder, extraction_folder):
+def downloadAndUnzipBooks(folder_path, download_folder, extraction_folder):
     base_url = "https://www.gutenberg.org/cache/epub/{book_id}/pg{book_id}-h.zip"
 
     # Ensure the download and extraction folders exist
@@ -68,4 +68,5 @@ def download_and_unzip_books(folder_path, download_folder, extraction_folder):
                 print(f"No book ID found in {filename}")
 
 
-download_and_unzip_books(folder_path, download_folder, extraction_folder)
+if __name__ == "__main__":
+    downloadAndUnzipBooks(folder_path, download_folder, extraction_folder)

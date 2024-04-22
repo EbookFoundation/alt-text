@@ -4,31 +4,23 @@
 
 import os
 
-input_file = "./empty_alt_text_sample.txt"  # The file path of whatever initial .txt you are working with
+input_file = "./images.txt"
 output_folder = "./book_outputs"
 
 
-def createIndividualBookFiles(input_file, output_folder):
-    # Ensure the output folder exists
+def splitSampleByBook(input_file, output_folder):
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
-
-    # Keep track of the last book number processed
-    last_book_number = None
 
     with open(input_file, "r") as file:
         for line in file:
             book_number = line.split()[0]  # Extracting book number
-            # Check if this line is for a new book
-            if book_number != last_book_number:
-                output_file_name = f"ebook_{book_number}.txt"
-                output_path = os.path.join(output_folder, output_file_name)
-                # print(f"Creating/Updating file for book {book_number}")
-                last_book_number = book_number
+            output_file_name = f"ebook_{book_number}.txt"
+            output_path = os.path.join(output_folder, output_file_name)
 
-            # Append to the file (creates a new file if it doesn't exist)
             with open(output_path, "a") as output_file:
                 output_file.write(line)
 
 
-createIndividualBookFiles(input_file, output_folder)
+if __name__ == "__main__":
+    splitSampleByBook(input_file, output_folder)

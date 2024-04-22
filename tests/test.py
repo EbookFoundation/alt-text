@@ -10,6 +10,7 @@ from src.alttext.langengine.openaiapi import OpenAIAPI
 import keys
 
 # HTML BOOK FILEPATHS
+HTML_ADVENTURES = "../books/pg76-h/pg76-images.html"
 HTML_BIRD = "../books/pg30221-h/pg30221-images.html"
 HTML_HUNTING = "../books/pg37122-h/pg37122-images.html"
 HTML_MECHANIC = "../books/pg71856-h/pg71856-images.html"
@@ -33,11 +34,20 @@ def testHTML():
         OpenAIAPI(keys.OpenAIKey(), "gpt-3.5-turbo"),
     )
 
-    alt.parseFile(HTML_HUNTING)
-    imgs = alt.getAllImgs()
-    src = imgs[7].attrs["src"]
-    print(src)
-    print(alt.genAltText(src))
+    # imgs = alt.getAllImgs()
+
+    alt.parseFile(HTML_ADVENTURES)
+    img = alt.getImg("images/c01-21.jpg")
+    src = img.attrs["src"]
+    imgData = alt.getImgData(src)
+    chars = alt.genChars(imgData, src)
+    desc = alt.genDesc(imgData, src, alt.getContext(img))
+    altText = alt.genAltText(src)
+    print(chars)
+    print("=====================================")
+    print(desc)
+    print("=====================================")
+    print(altText)
 
     # desc = alt.genDesc(alt.getImgData(src), src)
     # print(desc)
